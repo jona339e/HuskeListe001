@@ -7,12 +7,13 @@ namespace HuskeListe001
     internal class Menu
     {
         Data data = new Data();
-        SaveLoad sl = new();
+        SaveLoad sl = new(@"C:\MyDir\HuskeListeData.json");
         public Menu()
         {
-            if (File.Exists(sl.path))
+
+            if (sl.PathExists())
             {
-                sl.LoadData(data);
+                data = sl.LoadData(data);
             }
             while (true)
             {
@@ -131,10 +132,11 @@ namespace HuskeListe001
         {
             Appointment appoint = new();
 
-            appoint.ListName = "a";
-            appoint.Where = "b";
-            appoint.Start = DateTime.Now;
-            appoint.End = DateTime.Now;
+            //appoint.ListName = "a";
+            //appoint.Where = "b";
+            //appoint.Start = DateTime.Now;
+            //appoint.End = DateTime.Now;
+            AddGeneric<Appointment>(appoint);
             appoint.TypeOfAppointment = "c";
             appoint.Cost = 1;
             AddMoreWithWho<Appointment>(appoint, "Who is your appointment with?", "Do you want to add more participants? (y/n)");
@@ -148,10 +150,11 @@ namespace HuskeListe001
         {
             Meeting meet = new();
 
-            meet.ListName = "a";
-            meet.Where = "b";
-            meet.Start = DateTime.Now;
-            meet.End = DateTime.Now;
+            //meet.ListName = "a";
+            //meet.Where = "b";
+            //meet.Start = DateTime.Now;
+            //meet.End = DateTime.Now;
+            AddGeneric<Meeting>(meet);
             meet.Subject = "";
             meet.ToBring = ""; // TODO: list of elements to bring, iterate through them in ShowMeeting()
             meet.Role = "";
@@ -167,10 +170,11 @@ namespace HuskeListe001
         {
             GroceryList grocery = new();
 
-            grocery.ListName = "a";
-            grocery.Where = "b";
-            grocery.Start = DateTime.Now;
-            grocery.End = DateTime.Now;
+            //grocery.ListName = "a";
+            //grocery.Where = "b";
+            //grocery.Start = DateTime.Now;
+            //grocery.End = DateTime.Now;
+            AddGeneric<GroceryList>(grocery);
             grocery.Name = "";
             grocery.Category = "";
             grocery.Price = 1;
@@ -182,7 +186,14 @@ namespace HuskeListe001
             Console.WriteLine("Data Succesfully added!\nPress any key to continue");
             Console.ReadKey();
         }
+        private void AddGeneric<T>(T toDoList) where T : TodoList
+        {
+            toDoList.ListName = "a";
+            toDoList.Where = "b";
+            toDoList.Start = DateTime.Now;
+            toDoList.End = DateTime.Now;
 
+        }
         private void AddMoreWithWho<T>(T toDoList, string s1, string s2) where T : TodoList
         {
             string? input;

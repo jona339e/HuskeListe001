@@ -3,7 +3,7 @@
     internal sealed class Appointment : TodoList
     {
         public string? TypeOfAppointment { get; set; }
-        public int Cost { get; set; } = 0;
+        public int Cost { get; set; }
 
     }
 }
