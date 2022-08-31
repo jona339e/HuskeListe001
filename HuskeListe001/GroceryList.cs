@@ -1,6 +1,6 @@
 ﻿namespace HuskeListe001
 {
-    internal class GroceryList : TodoList
+    internal sealed class GroceryList : TodoList
     {
         public string? Name { get; set; }
         public string? Category { get; set; }

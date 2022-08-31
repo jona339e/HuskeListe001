@@ -1,10 +1,19 @@
-﻿namespace HuskeListe001
+﻿using System.Diagnostics;
+using System.IO;
+using System.Xml.Linq;
+
+namespace HuskeListe001
 {
     internal class Menu
     {
         Data data = new Data();
+        SaveLoad sl = new();
         public Menu()
         {
+            if (File.Exists(sl.path))
+            {
+                sl.LoadData(data);
+            }
             while (true)
             {
                 MainMenu();
@@ -19,6 +28,7 @@
             {
                 case ConsoleKey.NumPad1:
                 case ConsoleKey.D1:
+                    // TODO ShowNames, select name, modify list on selected name
                     ShowLists();
                     Console.ReadKey();
                     break;
@@ -34,22 +44,30 @@
 
         private void ShowNames()
         {
-            foreach (object title in data.MyData)
+            foreach (Appointment titleAppointment in data.AppointmentList)
             {
-
+                Console.WriteLine(titleAppointment.ListName);
+            }
+            foreach (Meeting titleMeeting in data.MeetingList)
+            {
+                Console.WriteLine(titleMeeting.ListName);
+            }
+            foreach (GroceryList titleGrocery in data.GroceryList)
+            {
+                Console.WriteLine(titleGrocery.ListName);
             }
         }
         private void ShowLists()
         {
-            foreach (Appointment a in data.MyData)
+            foreach (Appointment a in data.AppointmentList)
             {
                 ShowAppointment(a);
             }
-            foreach (GroceryList b in data.MyData)
+            foreach (GroceryList b in data.GroceryList)
             {
                 ShowGroceryList(b);
             }
-            foreach (Meeting c in data.MyData)
+            foreach (Meeting c in data.MeetingList)
             {
                 ShowMeeting(c);
             }
@@ -65,16 +83,23 @@
         }
         private void ShowGroceryList(GroceryList b)
         {
-            Console.WriteLine($"Listname: {b.ListName} Location: {b.Where} Start Time: {b.Start} End Time: {b.End} Appointment Type{b.Name} \nParticipants:");
-
+            // TODO: Make properties into a list. Display list here. add a loop so you can add more elements to the list.
+            Console.WriteLine($"Listname: {b.ListName} Location: {b.Where} Start Time: {b.Start} End Time: {b.End} Grocery name: {b.Name}\nWho I'm going shopping with:");
+            foreach (string? s in b.WithWho)
+            {
+                Console.WriteLine(s);
+            }
         }
         private void ShowMeeting(Meeting c)
         {
-            Console.WriteLine($"Listname: {c.ListName} Location: {c.Where} Start Time: {c.Start} End Time: {c.End} \nParticipants:");
-
+            Console.WriteLine($"Listname: {c.ListName} Location: {c.Where} Start Time: {c.Start} End Time: {c.End}" +
+                $"\nSubject:\n{c.Subject}\nI need to bring: {c.ToBring}\nMy role in the meeting: {c.Role}\nMeeting Participants:");
+            foreach (string? s in c.WithWho)
+            {
+                Console.WriteLine(s);
+            }
         }
 
-        
         private void ListMenu()
         {
             Console.Clear();
@@ -88,11 +113,11 @@
                     break;
                 case ConsoleKey.NumPad2:
                 case ConsoleKey.D2:
-                    
+                    AddMeeting();
                     break;
                 case ConsoleKey.NumPad3:
                 case ConsoleKey.D3:
-                    
+                    AddGroceryList();
                     break;
                 case ConsoleKey.NumPad4:
                 case ConsoleKey.D4:
@@ -114,7 +139,46 @@
             appoint.Cost = 1;
             AddMoreWithWho<Appointment>(appoint, "Who is your appointment with?", "Do you want to add more participants? (y/n)");
 
-            data.MyData.Add(appoint);
+            data.AppointmentList.Add(appoint);
+            sl.SaveData(data);
+            Console.WriteLine("Data Succesfully added!\nPress any key to continue");
+            Console.ReadKey();
+        }
+        private void AddMeeting()
+        {
+            Meeting meet = new();
+
+            meet.ListName = "a";
+            meet.Where = "b";
+            meet.Start = DateTime.Now;
+            meet.End = DateTime.Now;
+            meet.Subject = "";
+            meet.ToBring = ""; // TODO: list of elements to bring, iterate through them in ShowMeeting()
+            meet.Role = "";
+
+            AddMoreWithWho<Meeting>(meet, "Who is your meeting with?", "Do you want to add more participants? (y/n)");
+
+            data.MeetingList.Add(meet);
+            Console.WriteLine("Data Succesfully added!\nPress any key to continue");
+            sl.SaveData(data);
+            Console.ReadKey();
+        }
+        private void AddGroceryList()
+        {
+            GroceryList grocery = new();
+
+            grocery.ListName = "a";
+            grocery.Where = "b";
+            grocery.Start = DateTime.Now;
+            grocery.End = DateTime.Now;
+            grocery.Name = "";
+            grocery.Category = "";
+            grocery.Price = 1;
+            grocery.Amount = 2;
+            AddMoreWithWho<GroceryList>(grocery, "Who is your shopping trip with?", "Do you want to add more participants? (y/n)");
+
+            data.GroceryList.Add(grocery);
+            sl.SaveData(data);
             Console.WriteLine("Data Succesfully added!\nPress any key to continue");
             Console.ReadKey();
         }
@@ -135,7 +199,5 @@
 
             } while (Console.ReadKey(true).Key == ConsoleKey.Y || string.IsNullOrEmpty(input));
         }
-
     }
-    
 }
