@@ -3,16 +3,20 @@
     internal class Menu
     {
         Data data = new Data();
+        DirectoryInfo di = Directory.CreateDirectory(@"C:\MyDir");
         SaveLoad sl = new(@"C:\MyDir\HuskeListeData.json");
         public Menu()
         {
-
+            
             if (sl.PathExists())
             {
                 data = sl.LoadData(data);
             }
+            Console.WriteLine(@"Find json file at \C:\MyDir");
+            Thread.Sleep(1500);
             while (true)
             {
+                
                 MainMenu();
             }
         }
