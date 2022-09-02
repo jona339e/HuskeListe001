@@ -25,8 +25,7 @@
             {
                 case ConsoleKey.NumPad1:
                 case ConsoleKey.D1:
-                    // TODO ShowNames, select name, modify list on selected name
-                    ShowLists();
+                    ShowNames();
                     Console.ReadKey();
                     break;
                 case ConsoleKey.NumPad2:
@@ -46,35 +45,41 @@
 
         private void ShowNames()
         {
+
+            int counter = 1;
+            List<string> names = new();
             foreach (Appointment titleAppointment in data.AppointmentList)
             {
-                Console.WriteLine(titleAppointment.ListName);
+                Console.WriteLine(counter++ + " " + titleAppointment.ListName);
+                names.Add(titleAppointment.ListName);
             }
+
             foreach (Meeting titleMeeting in data.MeetingList)
             {
-                Console.WriteLine(titleMeeting.ListName);
+                Console.WriteLine(counter++ + " " + titleMeeting.ListName);
+                names.Add(titleMeeting.ListName);
             }
+
             foreach (GroceryList titleGrocery in data.GroceryList)
             {
-                Console.WriteLine(titleGrocery.ListName);
+                Console.WriteLine(counter++ + " " + titleGrocery.ListName);
+                names.Add(titleGrocery.ListName);
             }
-        }
-        private void ShowLists()
-        {
-            foreach (Appointment a in data.AppointmentList)
-            {
-                ShowData(a);
-            }
-            foreach (GroceryList b in data.GroceryList)
-            {
-                ShowData(b);
-            }
-            foreach (Meeting c in data.MeetingList)
-            {
-                ShowData(c);
-            }
-        }
 
+            if (int.TryParse(Console.ReadLine(), out int listIndex))
+            {
+                listIndex--;
+                FindData(names[listIndex]);
+                
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine("Invalid Input");
+            }
+
+            names.Clear();
+        }
 
         private void ShowData(Appointment a)
         {
@@ -107,40 +112,7 @@
                 Console.WriteLine(s);
             }
         }
-        
-        //private void ShowAppointment(Appointment a)
-        //{
-        //    Console.WriteLine($"Listname: {a.ListName} Location: {a.Where} Start Time: {a.Start} End Time: {a.End} Appointment Type{a.TypeOfAppointment} Cost of Appointment: {a.Cost}\nParticipants:");
-        //    foreach (string? s in a.WithWho)
-        //    {
-        //        Console.WriteLine(s);
-        //    }
-        //}
 
-        //private void ShowGroceryList(GroceryList b)
-        //{
-        //    // TODO: Make properties into a list. Display list here. add a loop so you can add more elements to the list.
-        //    Console.WriteLine($"Listname: {b.ListName} Location: {b.Where} Start Time: {b.Start} End Time: {b.End} \nWho I'm going shopping with:");
-        //    foreach (string? s in b.WithWho)
-        //    {
-        //        Console.WriteLine(s);
-        //    }
-        //    Console.WriteLine("\nGroceries:");
-        //    foreach (Groceries item in b.groceries)
-        //    {
-        //        Console.WriteLine($"{item.Name} Price: {item.Price} Amount: {item.Amount} Category: {item.Category} ");
-        //    }
-        //}
-
-        //private void ShowMeeting(Meeting c)
-        //{
-        //    Console.WriteLine($"Listname: {c.ListName} Location: {c.Where} Start Time: {c.Start} End Time: {c.End}" +
-        //        $"\nSubject:\n{c.Subject}\nI need to bring: {c.ToBring}\nMy role in the meeting: {c.Role}\nMeeting Participants:");
-        //    foreach (string? s in c.WithWho)
-        //    {
-        //        Console.WriteLine(s);
-        //    }
-        //}
 
         private void ListMenu()
         {
@@ -317,12 +289,38 @@
             } while (Console.ReadKey(true).Key == ConsoleKey.Y || string.IsNullOrEmpty(input));
         }
 
-        private void ShowListFromName<T>(T myList, string name) where T : TodoList
+        private void FindData(string name)
         {
-            if (myList.ListName == name)
+            // TODO: for this to work no list can have the same name. if two list has the same name, the first list's index - starting from appointmentlist - will be returned
+            foreach (Appointment x in data.AppointmentList)
             {
-                //ShowData(myList.GetType());
+                if (x.ListName == name)
+                {
+                    ShowData(x);
+                }
+            }
+
+            foreach (GroceryList x in data.GroceryList)
+            {
+                foreach (Groceries y in x.groceries)
+                {
+                    if (x.ListName == name)
+                    {
+                        ShowData(x);
+                    }
+                }
+
+            }
+
+            foreach (Meeting x in data.MeetingList)
+            {
+                if (x.ListName == name)
+                {
+                    ShowData(x);
+                }
             }
         }
+
+
     }
 }
